@@ -5,6 +5,7 @@
 
 #include "Vector.h"
 #include "ray.h"
+#include <vector>
 
 namespace ifs
 {
@@ -21,6 +22,13 @@ class Camera
     const ifs::Vector& view() const { return axis_view; }
     const ifs::Vector& up() const   { return axis_up; }
     const ifs::Vector& right() const { return axis_right; }
+
+    const void writeImage(std::vector<unsigned char> img) {
+      this->sceneImage = img;
+    }
+    const std::vector<unsigned char> getImage() {
+      return this->sceneImage;
+    }
 
     // view direction of a pixel at the fractional position x,y.
     // Nominally 0 <= x <= 1 and 0 <= y <= 1 for the primary fov,
@@ -56,6 +64,7 @@ class Camera
 
     ifs::Vector position;
     ifs::Vector axis_right, axis_up, axis_view;
+    std::vector<unsigned char> sceneImage;
 
 
 

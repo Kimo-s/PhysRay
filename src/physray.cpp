@@ -2,6 +2,7 @@
 #include "renderFunctions.h"
 #include "hittable.h"
 #include "material.h"
+#include "Integrator.h"
 
 #include <omp.h>
 
@@ -21,7 +22,7 @@ Color castRay(Ray& r, phr::WorldList world, shared_ptr<hittableBase> light, int 
         return Color(0.0,0.0,0.0,1.0);
     }
 
-    shared_ptr<BxDF> lightBRDF = make_shared<lightAreaBRDF>(lightAreaBRDF(light, rec.p, rec.normal));
+    shared_ptr<BxDF> lightBRDF = make_shared<lightAreaBRDF>(lightAreaBRDF(light, rec.p, rec.normal, world));
 
     Ray scattered;
     Color col;
@@ -44,7 +45,7 @@ Color castRay(Ray& r, phr::WorldList world, shared_ptr<hittableBase> light, int 
         // throughput = throughput*(col * rec.bxdf->pdf(r, ro, rec) / rr_prob);
         
         // f += col * rec.bxdf->f(r, ro, rec) * castRay(ro, world, light, depth - 1, throughput) / (lightBRDF->pdf(r, ro, rec));
-        f += col * lightBRDF->f(r, ro, rec) * castRay(ro, world, light, depth - 1, throughput) / (lightBRDF->pdf(r, ro, rec));
+        f += col * rec.bxdf->f(r, ro, rec) * castRay(ro, world, light, depth - 1, throughput) / (lightBRDF->pdf(r, ro, rec));
         // printf("%f, %f, %f\n", brdfCol.r, brdfCol.g, brdfCol.b);
     }
 
@@ -52,7 +53,7 @@ Color castRay(Ray& r, phr::WorldList world, shared_ptr<hittableBase> light, int 
 }
 
 
-void renderScene(Camera cam, int width, int height, phr::WorldList world, shared_ptr<phr::hittableBase> light, const char* name, int samplesPerPixel, int depth) {
+void renderScene(Camera& cam, int width, int height, phr::WorldList& world, shared_ptr<phr::hittableBase> light, const char* name, int samplesPerPixel, int depth) {
 
     std::vector<unsigned char> img;
     img.resize(width*height*4);
@@ -86,6 +87,10 @@ void renderScene(Camera cam, int width, int height, phr::WorldList world, shared
         percent += 1;
         printf("\rCreating frame (%s): %.2f%%", name, (percent * 1.0f / width)*100.0f );
     }
+
+    // DirectLightIntegrator integrator(samplesPerPixel, depth);
+    // integrator.Render(cam, width, height, world, light);
+
 
     stbi_write_png(name, width, height, 4, img.data(), width * 4);
     return;

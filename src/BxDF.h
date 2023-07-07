@@ -65,23 +65,24 @@ namespace phr {
 
     class lightAreaBRDF : public BxDF {
         public:
-        Vector& o;
-        Vector normalAtReciver;
+        Vector receiverNormal, pointOnSurface;
         shared_ptr<hittableBase> ptr;
+        WorldList& world;
         
-        lightAreaBRDF(shared_ptr<hittableBase> p, Vector& origin, Vector normal) : normalAtReciver(normal), ptr(p), o(origin) {}
+        lightAreaBRDF(shared_ptr<hittableBase> ptr, Vector& pointOnSurface, Vector receiverNormal, WorldList& world) 
+        : ptr(ptr), pointOnSurface(pointOnSurface), receiverNormal(receiverNormal), world(world)  {}
 
 
         float pdf(Ray& ri, Ray& ro, hit_record& rec) const override {
-            return ptr->pdf_value(o, ro.dir, normalAtReciver);
+            return ptr->pdf_value(pointOnSurface, receiverNormal, ro.dir, world);
         }
 
         float f(Ray& ri, Ray& ro, hit_record& rec) const override {
-            return ptr->f_value(o, ro.dir, normalAtReciver);
+            return 1.0;
         }
 
         Vector generate() const override {
-            return ptr->random(o);
+            return ptr->random(pointOnSurface);
         }
 
     };

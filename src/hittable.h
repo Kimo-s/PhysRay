@@ -3,11 +3,13 @@
 #include <memory>
 #include "physray.h"
 // #include "material.h"
+// #include "hittable_list.h"
 
 namespace phr {
 
     class materialBase;
     class BxDF;
+    class WorldList;
 
     struct hit_record {
         Vector p;
@@ -25,15 +27,15 @@ namespace phr {
         virtual ~hittableBase() {};
 
         virtual bool hit(Ray &in_ray, double tmin, double tmax, hit_record &rec) const = 0;
-        virtual float pdf_value(Vector& direction, Vector& pointOnSurface, Vector receiverNormal) const {
+        virtual float pdf_value(Vector pointOnSurface, Vector receiverNormal, Vector scatterDir, WorldList& world) const {
             return 0.0;
         };
 
-        virtual float f_value(Vector& direction, Vector& pointOnSurface, Vector receiverNormal) const {
+        virtual float f_value(Vector& pointOnLight, Vector& pointOnSurface, Vector receiverNormal) const {
             return 0.0;
         };
 
-        virtual Vector random(Vector& pointOnSurface) const {
+        virtual Vector random(Vector pointOnSurface) const {
             return Vector(1,0,0);
         };
 

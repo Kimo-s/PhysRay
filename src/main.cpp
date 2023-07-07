@@ -18,7 +18,7 @@ int main(){
     cam.setFov(70.0);
     
     shared_ptr<materialBase> mat = make_shared<lambertian>(lambertian(Color(0.0,1.0,0.0,1.0)));
-    shared_ptr<hittableBase> obj = make_shared<sphere>(sphere(0.5, Vector(-0.3,0,0.0), mat));
+    shared_ptr<hittableBase> obj = make_shared<sphere>(sphere(0.5, Vector(-0.3,-0.9,0.0), mat));
 
     shared_ptr<materialBase> matPlane = make_shared<lambertian>(lambertian(Color(1.0,1.0,0.0,1.0)));
     shared_ptr<hittableBase> botPlane = make_shared<rect>(rect(Vector(0,0,1.0),
@@ -40,21 +40,21 @@ int main(){
     shared_ptr<hittableBase> topplane = make_shared<rect>(rect(Vector(0,0,1.0),
     Vector(1.0,0,0),
     Vector(0,-0.9,1.3),
-    0.7,
-    0.7, matLight));
+    0.6,
+    0.6, matLight));
 
     shared_ptr<hittableBase> midplane = make_shared<rect>(rect(Vector(0,0,1.0),
     Vector(1.0,0,0),
     Vector(-0.5,-0.9,0.5),
     0.3,
-    0.3, matPlane));
+    0.3, make_shared<lambertian>(lambertian(Color(1.0,0.3,0.6,1.0)))));
 
-    // WorldList list(obj);
-    WorldList list(topplane);
-    // list.add(topplane);
+    WorldList list(obj);
+    // WorldList list(topplane);
+    list.add(topplane);
     list.add(botPlane);
     list.add(backPlane);
-    list.add(midplane);
+    // list.add(midplane);
 
 
     renderScene(cam, width, height, list, topplane, "test.png", 20, 4);
